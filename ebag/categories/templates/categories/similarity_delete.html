@@ -8,7 +8,7 @@
         {% csrf_token %}
         <button type="submit">Delete</button>
     </form>
-    <p><a href="{% url 'categories:similarity_display' similarity.id %}">Back</a></p>
+    <p><a href="{% url "categories:similarity_display" similarity.id %}">Back</a></p>
 {% endblock %}
 
 {% block script %}

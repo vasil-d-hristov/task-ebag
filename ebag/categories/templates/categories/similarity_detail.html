@@ -5,22 +5,22 @@
     <h2>Name: {{ similarity }}</h2>
     {% with one=similarity.node_one %}
         <p><strong>Node One:</strong>&#32;
-            <a href="{% url 'categories:category_display' one.id one.slug %}">
+            <a href="{% url "categories:category_display" one.id one.slug %}">
                 {{ one.name }}
             </a>
         </p>
     {% endwith %}
     {% with two=similarity.node_two %}
         <p><strong>Node Two:</strong>&#32;
-            <a href="{% url 'categories:category_display' two.id two.slug %}">
+            <a href="{% url "categories:category_display" two.id two.slug %}">
                 {{ two.name }}
             </a>
         </p>
     {% endwith %}
-    <p>Created: {{ similarity.created_at | date:'Y-m-d H:i:s e' }}</p>
-    <p>Updated: {{ similarity.updated_at | date:'Y-m-d H:i:s e' }}</p>
-    <p><a href="{% url 'categories:similarity_update' similarity.id %}">Update</a></p>
-    <p><a href="{% url 'categories:similarity_delete' similarity.id %}">Delete</a></p>
+    <p>Created: {{ similarity.created_at | date:"Y-m-d H:i:s e" }}</p>
+    <p>Updated: {{ similarity.updated_at | date:"Y-m-d H:i:s e" }}</p>
+    <p><a href="{% url "categories:similarity_update" similarity.id %}">Update</a></p>
+    <p><a href="{% url "categories:similarity_delete" similarity.id %}">Delete</a></p>
 {% endblock %}
 
 {% block script %}

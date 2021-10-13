@@ -57,7 +57,7 @@ class CategoryListViewTests(TestCase):
         response = self.client.get(link)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'There are no categories.')
-        self.assertQuerysetEqual(response.context['category_list'], [test_node_1, test_node_2])
+        self.assertQuerysetEqual(response.context['category_list'], [test_node_1, test_node_2], ordered=False)
 
 
 class CategoryCreateViewTests(TestCase):
@@ -160,7 +160,11 @@ class SimilarityListViewTests(TestCase):
         response = self.client.get(link)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'There are no similarities.')
-        self.assertQuerysetEqual(response.context['similarity_list'], [test_similarity_1, test_similarity_2])
+        self.assertQuerysetEqual(
+            response.context['similarity_list'],
+            [test_similarity_1, test_similarity_2],
+            ordered=False,
+        )
 
 
 class SimilarityCreateViewTests(TestCase):
@@ -223,8 +227,8 @@ class SimilarityUpdateViewTests(TestCase):
         self.assertEqual(response.context['manage_type'], 'update')
 
         form = response.context['form']
-        self.assertQuerysetEqual(form.fields['node_one'].queryset, [self.test_node_1, self.test_node_2])
-        self.assertQuerysetEqual(form.fields['node_two'].queryset, [self.test_node_1, self.test_node_2])
+        self.assertQuerysetEqual(form.fields['node_one'].queryset, [self.test_node_1, self.test_node_2], ordered=False)
+        self.assertQuerysetEqual(form.fields['node_two'].queryset, [self.test_node_1, self.test_node_2], ordered=False)
 
         data = {
             'node_one': self.test_node_2.id,

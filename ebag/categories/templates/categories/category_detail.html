@@ -6,10 +6,10 @@
     <p>Description: {{ category.description }}</p>
     <img src="{{ category.image.url }}" alt="Category Image"/>
     <p><strong>Parent:</strong> {{ category.parent }}</p>
-    <p>Created: {{ category.created_at | date:'Y-m-d H:i:s e' }}</p>
-    <p>Updated: {{ category.updated_at | date:'Y-m-d H:i:s e' }}</p>
-    <p><a href="{% url 'categories:category_update' category.id category.slug %}">Update</a></p>
-    <p><a href="{% url 'categories:category_delete' category.id category.slug %}">Delete</a></p>
+    <p>Created: {{ category.created_at | date:"Y-m-d H:i:s e" }}</p>
+    <p>Updated: {{ category.updated_at | date:"Y-m-d H:i:s e" }}</p>
+    <p><a href="{% url "categories:category_update" category.id category.slug %}">Update</a></p>
+    <p><a href="{% url "categories:category_delete" category.id category.slug %}">Delete</a></p>
     {% if category_parents %}
         <hr>
         <h3>Category Parent{{ category_parents | pluralize }}</h3>

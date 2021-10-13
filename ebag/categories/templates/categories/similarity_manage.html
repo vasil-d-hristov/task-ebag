@@ -19,7 +19,7 @@
             <button type="submit">Save</button>
         </form>
         {% if manage_type == "update" %}
-            <p><a href="{% url 'categories:similarity_display' pk %}">Back</a></p>
+            <p><a href="{% url "categories:similarity_display" pk %}">Back</a></p>
         {% endif %}
     {% else %}
         <p>There are no enough categories.</p>
