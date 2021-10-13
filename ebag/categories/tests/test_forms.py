@@ -14,25 +14,25 @@ class CategoryManageFormTests(TestCase):
         self.root_node = create_category(Category.ROOT_NAME)
         self.test_node = create_category('T1', self.root_node)
 
-    def test_form_category_manage_is_valid(self):
+    def test_form_category_manage_valid(self):
         data = {
             'name': 'T2',
             'description': 'test',
             'parent': self.root_node,
         }
-        file_path = os.path.join(settings.BASE_DIR, r'categories\tests\files\cat01.jpg')
+        file_path = os.path.join(settings.BASE_DIR, 'categories', 'tests', 'files', 'cat01.jpg')
         with open(file_path, 'rb') as file_upload:
             data_file = {'image': SimpleUploadedFile(file_upload.name, file_upload.read())}
         form = CategoryManage(data, data_file)
         self.assertTrue(form.is_valid())
 
-    def test_form_category_manage_is_not_valid_due_to_name_duplication(self):
+    def test_form_category_manage_not_valid_due_to_name_duplication(self):
         data = {
             'name': 'T1',
             'description': 'test',
             'parent': self.root_node,
         }
-        file_path = os.path.join(settings.BASE_DIR, r'categories\tests\files\cat01.jpg')
+        file_path = os.path.join(settings.BASE_DIR, 'categories', 'tests', 'files', 'cat01.jpg')
         with open(file_path, 'rb') as file_upload:
             data_file = {'image': SimpleUploadedFile(file_upload.name, file_upload.read())}
         form = CategoryManage(data, data_file)
@@ -48,7 +48,7 @@ class SimilarityManageFormTests(TestCase):
         self.test_node_3 = create_category('T3', self.root_node)
         self.test_similarity = create_similarity(self.test_node_1, self.test_node_2)
 
-    def test_form_similarity_manage_is_valid(self):
+    def test_form_similarity_manage_valid(self):
         data = {
             'node_one': self.test_node_1,
             'node_two': self.test_node_3,
@@ -56,7 +56,7 @@ class SimilarityManageFormTests(TestCase):
         form = SimilarityManage(data)
         self.assertTrue(form.is_valid())
 
-    def test_form_similarity_manage_is_not_valid_due_to_similarity_duplication(self):
+    def test_form_similarity_manage_not_valid_due_to_similarity_duplication(self):
         data = {
             'node_one': self.test_node_2,
             'node_two': self.test_node_1,

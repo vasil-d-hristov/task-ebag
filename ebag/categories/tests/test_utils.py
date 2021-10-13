@@ -13,7 +13,7 @@ from django.test import TestCase
 
 def set_relations():
     root_node = create_category(Category.ROOT_NAME)
-    categories = [create_category(f'T {i}') for i in range(1, 9)]
+    categories = [create_category(f'Category {i}') for i in range(1, 9)]
     categories = [root_node] + categories
 
     # root tree - branch one
@@ -264,7 +264,7 @@ class CategoryTreeBehaviorTests(TestCase):
 
     def setUp(self):
         root_node = create_category(Category.ROOT_NAME)
-        categories = [create_category(f'T {i}', root_node) for i in range(1, 6)]
+        categories = [create_category(f'Category {i}', root_node) for i in range(1, 6)]
         self.categories = [root_node] + categories
 
     def test_behavior_category_tree_initial(self):
@@ -332,7 +332,7 @@ class CategoryIslandsBehaviorTests(TestCase):
 
     def setUp(self):
         root_node = create_category(Category.ROOT_NAME)
-        categories = [create_category(f'T {i}', root_node) for i in range(1, 6)]
+        categories = [create_category(f'Category {i}', root_node) for i in range(1, 6)]
         self.categories = [root_node] + categories
 
     def test_behavior_category_islands_initial(self):

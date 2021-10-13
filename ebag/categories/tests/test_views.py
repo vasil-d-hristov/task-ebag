@@ -15,7 +15,7 @@ class IndexViewTests(TestCase):
         response = self.client.get('/')
         self.assertRedirects(response, reverse('categories:index'))
 
-    def test_view_index_without_database(self):
+    def test_view_index_without_database_records(self):
         link = reverse('categories:index')
         response = self.client.get(link)
         self.assertEqual(response.status_code, 200)
@@ -24,7 +24,7 @@ class IndexViewTests(TestCase):
         self.assertEqual(response.context['category_root_tree'], '')
         self.assertEqual(response.context['category_root_islands'], '')
 
-    def test_view_index_with_database(self):
+    def test_view_index_with_database_records(self):
         root_node = create_category(Category.ROOT_NAME)
         test_node_1 = create_category('T1', root_node)
         test_node_2 = create_category('T2', root_node)
@@ -41,14 +41,14 @@ class IndexViewTests(TestCase):
 
 class CategoryListViewTests(TestCase):
 
-    def test_view_category_list_without_database(self):
+    def test_view_category_list_without_database_records(self):
         link = reverse('categories:category_list')
         response = self.client.get(link)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'There are no categories.')
         self.assertQuerysetEqual(response.context['category_list'], [])
 
-    def test_view_category_list_with_database(self):
+    def test_view_category_list_with_database_records(self):
         root_node = create_category(Category.ROOT_NAME)
         test_node_1 = create_category('T1', root_node)
         test_node_2 = create_category('T2', root_node)
@@ -62,27 +62,48 @@ class CategoryListViewTests(TestCase):
 
 class CategoryCreateViewTests(TestCase):
 
-    def test_view_category_create(self):
-        root_node = create_category(Category.ROOT_NAME)
+    def setUp(self):
+        self.root_node = create_category(Category.ROOT_NAME)
+        self.test_node = create_category('T1', self.root_node)
 
+    def test_view_category_create_valid(self):
         link_create = reverse('categories:category_create')
         response = self.client.get(link_create)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['manage_type'], 'create')
 
         data = {
-            'name': 'T1',
+            'name': 'T2',
             'description': 'test',
-            'parent': root_node.id,
+            'parent': self.root_node.id,
         }
-        file_path = os.path.join(settings.BASE_DIR, r'categories\tests\files\cat01.jpg')
+        file_path = os.path.join(settings.BASE_DIR, 'categories', 'tests', 'files', 'cat01.jpg')
         with open(file_path, 'rb') as file_upload:
             data['image'] = SimpleUploadedFile(file_upload.name, file_upload.read())
 
         response = self.client.post(link_create, data)
 
-        link_display = reverse('categories:category_display', args=[2, 't1'])
+        link_display = reverse('categories:category_display', args=[3, 't2'])
         self.assertRedirects(response, link_display)
+
+    def test_view_category_create_not_valid_due_to_name_duplication(self):
+        link_create = reverse('categories:category_create')
+        response = self.client.get(link_create)
+        self.assertEqual(response.status_code, 200)
+
+        data = {
+            'name': 'T1',
+            'description': 'test',
+            'parent': self.root_node.id,
+        }
+        file_path = os.path.join(settings.BASE_DIR, 'categories', 'tests', 'files', 'cat01.jpg')
+        with open(file_path, 'rb') as file_upload:
+            data['image'] = SimpleUploadedFile(file_upload.name, file_upload.read())
+
+        response = self.client.post(link_create, data)
+
+        error_message = 'Category with this Name already exists.'
+        self.assertFormError(response, 'form', None, error_message)
 
 
 class CategoryDisplayViewTests(TestCase):
@@ -104,7 +125,7 @@ class CategoryUpdateViewTests(TestCase):
         self.test_node_1 = create_category('T1', self.root_node)
         self.test_node_2 = create_category('T2', self.test_node_1)
 
-    def test_view_category_update(self):
+    def test_view_category_update_valid(self):
         link_update = reverse('categories:category_update', args=[self.test_node_1.id, self.test_node_1.slug])
         response = self.client.get(link_update)
         self.assertEqual(response.status_code, 200)
@@ -122,6 +143,32 @@ class CategoryUpdateViewTests(TestCase):
         link_display = reverse('categories:category_display', args=[self.test_node_1.id, self.test_node_1.slug])
         self.assertRedirects(response, link_display)
         self.assertEqual(self.test_node_1.name, 'T 11')
+
+    def test_view_category_update_not_valid_due_to_name_duplication(self):
+        link_update = reverse('categories:category_update', args=[self.test_node_1.id, self.test_node_1.slug])
+        response = self.client.get(link_update)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.context['form'].initial
+        data['name'] = 'T2'
+
+        response = self.client.post(link_update, data)
+
+        error_message = 'Category with this Name already exists.'
+        self.assertFormError(response, 'form', None, error_message)
+
+    def test_view_category_update_not_valid_due_to_parent_discrepancy(self):
+        link_update = reverse('categories:category_update', args=[self.test_node_1.id, self.test_node_1.slug])
+        response = self.client.get(link_update)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.context['form'].initial
+        data['parent'] = 3
+
+        response = self.client.post(link_update, data)
+
+        error_message = 'Select a valid choice. That choice is not one of the available choices.'
+        self.assertFormError(response, 'form', 'parent', error_message)
 
 
 class CategoryDeleteViewTests(TestCase):
@@ -141,14 +188,14 @@ class CategoryDeleteViewTests(TestCase):
 
 class SimilarityListViewTests(TestCase):
 
-    def test_view_similarity_list_without_database(self):
+    def test_view_similarity_list_without_database_records(self):
         link = reverse('categories:similarity_list')
         response = self.client.get(link)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'There are no similarities.')
         self.assertQuerysetEqual(response.context['similarity_list'], [])
 
-    def test_view_similarity_list_with_database(self):
+    def test_view_similarity_list_with_database_records(self):
         root_node = create_category(Category.ROOT_NAME)
         test_node_1 = create_category('T1', root_node)
         test_node_2 = create_category('T2', root_node)
@@ -169,14 +216,14 @@ class SimilarityListViewTests(TestCase):
 
 class SimilarityCreateViewTests(TestCase):
 
-    def test_view_similarity_create_without_database(self):
+    def test_view_similarity_create_without_database_records(self):
         link = reverse('categories:similarity_create')
         response = self.client.get(link)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'There are no enough categories.')
         self.assertEqual(response.context['manage_type'], 'create')
 
-    def test_view_similarity_create_with_database(self):
+    def test_view_similarity_create_with_database_records_valid(self):
         root_node = create_category(Category.ROOT_NAME)
         test_node_1 = create_category('T1', root_node)
         test_node_2 = create_category('T2', root_node)
@@ -196,6 +243,36 @@ class SimilarityCreateViewTests(TestCase):
 
         link_display = reverse('categories:similarity_display', args=[1])
         self.assertRedirects(response, link_display)
+
+    def test_view_similarity_create_with_database_records_not_valid_due_to_similarity_duplication(self):
+        root_node = create_category(Category.ROOT_NAME)
+        test_node_1 = create_category('T1', root_node)
+        test_node_2 = create_category('T2', root_node)
+        create_similarity(test_node_1, test_node_2)
+
+        link_create = reverse('categories:similarity_create')
+        response = self.client.get(link_create)
+        self.assertEqual(response.status_code, 200)
+
+        data = {
+            'node_one': test_node_1.id,
+            'node_two': test_node_2.id,
+        }
+
+        response = self.client.post(link_create, data)
+
+        error_message = 'Such similar Similarity already exists.'
+        self.assertFormError(response, 'form', None, error_message)
+
+        data = {
+            'node_one': test_node_2.id,
+            'node_two': test_node_1.id,
+        }
+
+        response = self.client.post(link_create, data)
+
+        error_message = 'Such mirror Similarity already exists.'
+        self.assertFormError(response, 'form', None, error_message)
 
 
 class SimilarityDisplayViewTests(TestCase):
@@ -217,18 +294,21 @@ class SimilarityUpdateViewTests(TestCase):
     def setUp(self):
         self.root_node = create_category(Category.ROOT_NAME)
         self.test_node_1 = create_category('T1', self.root_node)
-        self.test_node_2 = create_category('T2', self.root_node)
-        self.test_similarity = create_similarity(self.test_node_1, self.test_node_2)
+        self.test_node_2 = create_category('T2', self.test_node_1)
+        self.test_node_3 = create_category('T3', self.test_node_2)
+        self.test_similarity_1 = create_similarity(self.test_node_1, self.test_node_2)
+        self.test_similarity_2 = create_similarity(self.test_node_2, self.test_node_3)
 
-    def test_view_similarity_update(self):
-        link_update = reverse('categories:similarity_update', args=[self.test_similarity.id])
+    def test_view_similarity_update_valid(self):
+        link_update = reverse('categories:similarity_update', args=[self.test_similarity_1.id])
         response = self.client.get(link_update)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['manage_type'], 'update')
 
         form = response.context['form']
-        self.assertQuerysetEqual(form.fields['node_one'].queryset, [self.test_node_1, self.test_node_2], ordered=False)
-        self.assertQuerysetEqual(form.fields['node_two'].queryset, [self.test_node_1, self.test_node_2], ordered=False)
+        queryset = [self.test_node_1, self.test_node_2, self.test_node_3]
+        self.assertQuerysetEqual(form.fields['node_one'].queryset, queryset, ordered=False)
+        self.assertQuerysetEqual(form.fields['node_two'].queryset, queryset, ordered=False)
 
         data = {
             'node_one': self.test_node_2.id,
@@ -236,12 +316,37 @@ class SimilarityUpdateViewTests(TestCase):
         }
 
         response = self.client.post(link_update, data)
-        self.test_similarity.refresh_from_db()
+        self.test_similarity_1.refresh_from_db()
 
-        link_display = reverse('categories:similarity_display', args=[self.test_similarity.id])
+        link_display = reverse('categories:similarity_display', args=[self.test_similarity_1.id])
         self.assertRedirects(response, link_display)
-        self.assertEqual(self.test_similarity.node_one, self.test_node_2)
-        self.assertEqual(self.test_similarity.node_two, self.test_node_1)
+        self.assertEqual(self.test_similarity_1.node_one, self.test_node_2)
+        self.assertEqual(self.test_similarity_1.node_two, self.test_node_1)
+
+    def test_view_similarity_update_not_valid_due_to_similarity_duplication(self):
+        link_update = reverse('categories:similarity_update', args=[self.test_similarity_2.id])
+        response = self.client.get(link_update)
+        self.assertEqual(response.status_code, 200)
+
+        data = {
+            'node_one': self.test_node_1.id,
+            'node_two': self.test_node_2.id,
+        }
+
+        response = self.client.post(link_update, data)
+
+        error_message = 'Such similar Similarity already exists.'
+        self.assertFormError(response, 'form', None, error_message)
+
+        data = {
+            'node_one': self.test_node_2.id,
+            'node_two': self.test_node_1.id,
+        }
+
+        response = self.client.post(link_update, data)
+
+        error_message = 'Such mirror Similarity already exists.'
+        self.assertFormError(response, 'form', None, error_message)
 
 
 class SimilarityDeleteViewTests(TestCase):
@@ -281,7 +386,7 @@ class RandomDatabaseViewsTests(TestCase):
 
         for i in range(1, random.randint(10, 100)):
             parent = random.choice(categories + [root_node])
-            categories.append(create_category(f'T {i}', parent))
+            categories.append(create_category(f'Category {i}', parent))
 
         for i in range(1, random.randint(10, 100)):
             node_one = random.choice(categories)

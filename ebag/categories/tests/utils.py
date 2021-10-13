@@ -7,13 +7,21 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 def create_category(name, parent=None):
     if parent:
-        file_path = r'categories\tests\files\cat01.jpg'
+        file_name = 'cat01.jpg'
     else:
-        file_path = r'categories\tests\files\castle.jpg'
-    file_path = os.path.join(settings.BASE_DIR, file_path)
+        file_name = 'castle.jpg'
+
+    file_path = os.path.join(settings.BASE_DIR, 'categories', 'tests', 'files', file_name)
+
     with open(file_path, 'rb') as file_upload:
         image = SimpleUploadedFile(file_upload.name, file_upload.read())
-        return Category.objects.create(name=name, description='test', image=image, parent=parent)
+
+    description = (
+        'A category description is a paragraph or two of content on '
+        'the page representing an entire category of items for sale.'
+    )
+
+    return Category.objects.create(name=name, description=description, image=image, parent=parent)
 
 
 def create_similarity(node_one, node_two):

@@ -5,8 +5,7 @@ from categories.models import Category, Similarity
 
 class Graph:
     """
-    Python program to print connected
-    components in an undirected graph
+    Print connected components in an undirected graph.
     """
 
     def __init__(self, vertex):
@@ -96,11 +95,6 @@ def get_category_siblings(node):
 def get_category_similarities(node):
     list_one = list(map(lambda it: (it.node_two, it), node.related_node_one.all()))
     list_two = list(map(lambda it: (it.node_one, it), node.related_node_two.all()))
-    # return list(
-    #     Category.objects.filter(
-    #         Q(related_node_one__node_two=node) | Q(related_node_two__node_one=node)
-    #     ).distinct()
-    # )
     return list_one + list_two
 
 
