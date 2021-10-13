@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Category Display</h1>
+    <h2>Name: {{ category.name }}</h2>
+    <p>Description: {{ category.description }}</p>
+    <img src="{{ category.image.url }}" alt="Category Image"/>
+    <p><strong>Parent:</strong> {{ category.parent }}</p>
+    <p>Created: {{ category.created_at | date:'Y-m-d H:i:s e' }}</p>
+    <p>Updated: {{ category.updated_at | date:'Y-m-d H:i:s e' }}</p>
+    <p><a href="{% url 'categories:category_update' category.id category.slug %}">Update</a></p>
+    <p><a href="{% url 'categories:category_delete' category.id category.slug %}">Delete</a></p>
+    {% if category_parents %}
+        <hr>
+        <h3>Category Parent{{ category_parents | pluralize }}</h3>
+        <ul>
+            {% for parent in category_parents %}
+                <li>
+                    <p><a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a></p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if category_siblings %}
+        <hr>
+        <h3>Category Sibling{{ category_siblings | pluralize }}</h3>
+        <ul>
+            {% for sibling in category_siblings %}
+                <li>
+                    <p><a href="{{ sibling.get_absolute_url }}">{{ sibling.name }}</a></p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if category_nodes %}
+        <hr>
+        <h3>Category Node{{ category_nodes | pluralize }}</h3>
+        <ul>
+            {% for node in category_nodes %}
+                <li>
+                    <p><a href="{{ node.get_absolute_url }}">{{ node.name }}</a></p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if category_tree %}
+        <hr>
+        <h3>Category Tree</h3>
+        <p>{{ category_tree | safe | linebreaksbr }}</p>
+    {% endif %}
+    {% if category_similarities %}
+        <hr>
+        <h3>Category Similarity</h3>
+        <ul>
+            {% for similarity in category_similarities %}
+                <li>
+                    <p>
+                        <a href="{{ similarity.0.get_absolute_url }}">{{ similarity.0.name }}</a>
+                        ( <a href="{{ similarity.1.get_absolute_url }}">{{ similarity.1 }}</a> )
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if category_island %}
+        <hr>
+        <h3>Category Island</h3>
+        <p>{{ category_island | safe | linebreaksbr }}</p>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.getElementById('nav_220').classList.add('active')
+    </script>
+{% endblock %}

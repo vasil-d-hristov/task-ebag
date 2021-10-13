@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Category Delete</h1>
+    <h2>Name: {{ category.name }}</h2>
+    <p>Are you sure?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+    <p><a href="{% url 'categories:category_display' category.id category.slug %}">Back</a></p>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.getElementById('nav_220').classList.add('active')
+    </script>
+{% endblock %}

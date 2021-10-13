@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <title>Categories</title>
+    <link href="{% static "categories/css/base.css" %}" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="sidebar">
+    {% block sidebar %}
+        <a id="nav_127" href="{% url 'categories:index' %}">Home Page</a>
+        <a id="nav_220" href="{% url 'categories:category_list' %}">Category List</a>
+        <a id="nav_240" href="{% url 'categories:category_create' %}">Category Create</a>
+        <a id="nav_330" href="{% url 'categories:similarity_list' %}">Similarity List</a>
+        <a id="nav_360" href="{% url 'categories:similarity_create' %}">Similarity Create</a>
+    {% endblock %}
+</div>
+
+<div class="content">
+    {% block content %}
+    {% endblock %}
+</div>
+
+{% block script %}
+    <script>
+        document.getElementById('nav_127').classList.add('active')
+    </script>
+{% endblock %}
+
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Category {{ manage_type | capfirst }}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <p>
+            {{ form.name.errors }}
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {{ form.name }}
+        </p>
+        <p>
+            {{ form.description.errors }}
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+        </p>
+        <p>
+            {{ form.image.errors }}
+            <label for="{{ form.image.id_for_label }}">Image:</label>
+            {{ form.image }}
+        </p>
+        <p>
+            {{ form.parent.errors }}
+            <label for="{{ form.parent.id_for_label }}">Parent:</label>
+            {{ form.parent }}
+        </p>
+        <button type="submit">Save</button>
+    </form>
+    {% if manage_type == "update" %}
+        <p><a href="{% url 'categories:category_display' pk slug %}">Back</a></p>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.getElementById('nav_240').classList.add('active')
+    </script>
+{% endblock %}

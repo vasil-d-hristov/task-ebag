@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Similarity {{ manage_type | capfirst }}</h1>
+    {% if category_count > 1 %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <p>
+                {{ form.node_one.errors }}
+                <label for="{{ form.node_one.id_for_label }}">Node One:</label>
+                {{ form.node_one }}
+            </p>
+            <p>
+                {{ form.node_two.errors }}
+                <label for="{{ form.node_two.id_for_label }}">Node Two:</label>
+                {{ form.node_two }}
+            </p>
+            <button type="submit">Save</button>
+        </form>
+        {% if manage_type == "update" %}
+            <p><a href="{% url 'categories:similarity_display' pk %}">Back</a></p>
+        {% endif %}
+    {% else %}
+        <p>There are no enough categories.</p>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.getElementById('nav_360').classList.add('active')
+    </script>
+{% endblock %}

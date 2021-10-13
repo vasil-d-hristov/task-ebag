@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to Home Page</h1>
+    <p>The site has the following record counts:</p>
+    <ul>
+        <li>
+            <strong>Categories:</strong> {{ category_count }}
+            {% if category_root_tree %} ( + 1 {{ root_name | capfirst }} ){% endif %}
+        </li>
+        <li>
+            <strong>Similarities:</strong> {{ similarity_count }}
+        </li>
+    </ul>
+    {% if category_root_tree %}
+        <hr>
+        <h3>Root Tree</h3>
+        <p>{{ category_root_tree | safe | linebreaksbr }}</p>
+    {% endif %}
+    {% if category_root_islands %}
+        <hr>
+        <h3>Root Island(s)</h3>
+        <p>{{ category_root_islands | safe | linebreaksbr }}</p>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.getElementById('nav_127').classList.add('active')
+    </script>
+{% endblock %}

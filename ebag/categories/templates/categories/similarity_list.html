@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Similarity List</h1>
+    {% if similarity_list %}
+        <ul>
+            {% for similarity in similarity_list %}
+                <li>
+                    <h3><a href="{{ similarity.get_absolute_url }}">{{ similarity }}</a></h3>
+                    {% with one=similarity.node_one %}
+                        <p><strong>Node One:</strong>&#32;
+                            <a href="{% url 'categories:category_display' one.id one.slug %}">
+                                {{ one.name }}
+                            </a>
+                        </p>
+                    {% endwith %}
+                    {% with two=similarity.node_two %}
+                        <p><strong>Node Two:</strong>&#32;
+                            <a href="{% url 'categories:category_display' two.id two.slug %}">
+                                {{ two.name }}
+                            </a>
+                        </p>
+                    {% endwith %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no similarities.</p>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.getElementById('nav_330').classList.add('active')
+    </script>
+{% endblock %}
