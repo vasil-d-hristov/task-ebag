@@ -6,11 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 def create_category(name, parent=None):
-    if parent:
-        file_name = 'cat01.jpg'
-    else:
-        file_name = 'castle.jpg'
-
+    file_name = 'cat01.jpg' if parent else 'castle.jpg'
     file_path = os.path.join(settings.BASE_DIR, 'categories', 'tests', 'files', file_name)
 
     with open(file_path, 'rb') as file_upload:

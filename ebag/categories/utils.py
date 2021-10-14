@@ -5,7 +5,7 @@ from categories.models import Category, Similarity
 
 class Graph:
     """
-    Print connected components in an undirected graph.
+    Define and print connected components in an undirected graph.
     """
 
     def __init__(self, vertex):

@@ -14,7 +14,7 @@ def set_parent():
 
 class Category(models.Model):
     """
-    (Sub)Category
+    Define (Sub)Categories
     """
     ROOT_NAME = 'root'
 
@@ -51,7 +51,7 @@ class Category(models.Model):
 
 class Similarity(models.Model):
     """
-    Category Similarities
+    Define Category Similarities
     """
     node_one = models.ForeignKey(
         Category,
